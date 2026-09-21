@@ -38,7 +38,7 @@ chart is code a student pastes after running `uv add matplotlib`.
 
 import marimo
 
-__generated_with = "0.24.0"
+__generated_with = "0.24.2"
 app = marimo.App(width="medium", sql_output="pandas")
 
 
@@ -51,7 +51,9 @@ def _():
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""# Your First Notebook""")
+    mo.md(r"""
+    # Your First Notebook
+    """)
     return
 
 
