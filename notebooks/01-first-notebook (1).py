@@ -543,6 +543,11 @@ def _(mo):
     return
 
 
+@app.cell(hide_code=True)
+def _():
+    return
+
+
 @app.cell
 def _(freight_charges):
     under_25 = []
