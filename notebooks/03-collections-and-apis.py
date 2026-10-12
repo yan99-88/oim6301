@@ -109,6 +109,12 @@ def _(goog_quote):
     return
 
 
+@app.cell
+def _(goog_quote):
+    goog_quote.get("Currency", 0)
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -140,18 +146,6 @@ def _(mo):
     return
 
 
-@app.cell
-def _():
-    week_statuses = ["shipped", "pending", "shipped", "cancelled", "shipped", "shipped", "pending"]
-
-    status_counts = {}
-    for _status in week_statuses:
-        status_counts[_status] = status_counts.get(_status, 0) + 1
-
-    status_counts
-    return
-
-
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -175,6 +169,80 @@ def _(mo):
 def _():
     closing_prices = {"AAPL": 260.81, "NVDA": 186.00, "MSFT": 404.88, "GOOG": 308.42}
     closing_prices
+    return (closing_prices,)
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    1. The price of AAPL was 260.81
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    2a. Price of Tesla with square brackets
+    """)
+    return
+
+
+@app.cell
+def _(TSLA, closing_prices):
+    closing_prices[TSLA]
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    2b. Price of Tesla with "None".
+    """)
+    return
+
+
+@app.cell
+def _(closing_prices):
+    closing_prices.get("TSLA", "None")
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    3. Tickers above 200
+    """)
+    return
+
+
+@app.cell
+def _(closing_prices):
+    tickers_200 = []
+    for _symbol, _price in closing_prices.items():
+        if _price > 200.00:
+            tickers_200.append(_symbol)
+    tickers_200
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    Ticker with highest price
+    """)
+    return
+
+
+@app.cell
+def _(closing_prices):
+    highest_price = 0
+    highest_ticker = ""
+    for _symbol, _price in closing_prices.items():
+        if _price > highest_price:
+            highest_price = _price
+            highest_ticker = _symbol
+    highest_ticker        
     return
 
 
@@ -195,6 +263,18 @@ def _(mo):
 
 @app.cell
 def _():
+    week_statuses = ["shipped", "pending", "shipped", "cancelled", "shipped", "shipped", "pending"]
+
+    status_counts = {}
+    for _status in week_statuses:
+        status_counts[_status] = status_counts.get(_status, 0) + 1
+
+    status_counts
+    return
+
+
+@app.cell
+def _():
     ship_countries = [
         "France", "Germany", "Brazil", "France", "Belgium", "Brazil", "Switzerland",
         "Switzerland", "Brazil", "Venezuela", "Austria", "Mexico", "Germany", "Brazil",
@@ -202,6 +282,23 @@ def _():
         "Finland", "USA", "USA", "Germany", "France", "Austria", "Argentina", "Venezuela",
     ]
     len(ship_countries)
+    return (ship_countries,)
+
+
+@app.cell
+def _(ship_countries):
+    order_counts = {}
+    for _orders in ship_countries:
+        order_counts[_orders] = order_counts.get(_orders, 0) + 1
+    order_counts
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    The countries with the most orders were France, Germany, Brazil and USA.
+    """)
     return
 
 
@@ -396,6 +493,38 @@ def _(mo):
     2. Every customer who has ordered from you this year, each once
     3. The units sold of each product, looked up by product name
     4. One shipment's carrier, tracking number and ship date, which must not change once recorded
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    Dictionary
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    Set
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    List
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    Tuple
     """)
     return
 
