@@ -94,7 +94,6 @@ def _(cost, tax):
 
     total_cost = float(cost) + float(tax)
     print (total_cost)
-
     return
 
 
