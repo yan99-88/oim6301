@@ -76,7 +76,13 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    My goal is to ensure that the sum of all stock's shares multiplied by their prices is less than or equal to $5000. My goal is also to find out what share prices should be based on my target weights.
+    My goal is to ensure that the sum of all stock's shares multiplied by their prices is less than or equal to $5000. My goal is also to find out what share prices should be based on my target weights. I will first run a for loop where I will determine each stock's holdings by multiplying its shares by the price, or the holding value, and then getting the sum of all of the holding values to get the total portfolio value. Then, I will add 5000 to the total portfolio value.
+
+    Next, I will multiply this new total portfolio value (current value + $5000) by each stock's target weight to determine the target dollar amount that should be allocated to that stock.
+
+    Once I have the target dollar amount for each stock, I will divide it by the current share price of that stock to determine the target number of shares I should hold.
+
+    Finally, I will compare the target number of shares to the number of shares I currently hold to determine how many shares I need to buy or sell in order to reach my target allocation, making sure that the total cost of any purchases does not exceed the $5000 I have available to invest.
     """)
     return
 
@@ -106,7 +112,7 @@ def _():
     cash = 5000.00
     target_weights = {"AAPL": 0.20, "MSFT": 0.20, "GOOG": 0.15,
                       "AMZN": 0.15, "NVDA": 0.15, "TSLA": 0.15}
-    return (holdings,)
+    return holdings, target_weights
 
 
 @app.cell
@@ -125,11 +131,72 @@ def _(mo):
     return
 
 
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    My work before using the agent
+    """)
+    return
+
+
 @app.cell
 def _(holdings):
     for ticker, shares, price in holdings:
-        holding_value = shares * price
-        print(f"The total value of {ticker} is ${holding_value:.2f}")
+        portfolio_value = 0
+        value = shares * price
+        if value > 0:
+            portfolio_value = value + portfolio_value
+    portfolio_value
+   
+    return (portfolio_value,)
+
+
+@app.cell
+def _(portfolio_value):
+    cash_included = portfolio_value + 5000
+    print(f"${cash_included}")
+    return (cash_included,)
+
+
+@app.cell
+def _(cash_included, target_weights):
+    for stock, target in target_weights.items:
+        target_amount = cash_included * target
+    print(target_amount)
+    return (target_amount,)
+
+
+@app.cell
+def _(holdings, target_amount):
+    for ticker, shares, price in holdings:
+        target_holdings = target_amount / price
+    print(target_holdings)
+    return (target_holdings,)
+
+
+@app.cell
+def _(holdings, target_holdings):
+    for ticker, shares, price in holdings:
+        shares_sold = target_holdings - shares
+    return
+
+
+app._unparsable_cell(
+    r"""
+    for ticker, shares, price in holdings:
+    total_cash_per_stock = target_amount + (shares_sold * price)
+    """,
+    name="_"
+)
+
+
+@app.cell
+def _():
+    return
+
+
+@app.cell
+def _():
     return
 
 
