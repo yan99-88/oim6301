@@ -45,6 +45,14 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
+    An investor with limited funds who wants a diversified portfolio would want to know how to weigh their holdings properly. If they don't know, their money may be invested way more in one stock compared to the other based on share price changes and the weight applied to that specific stock.
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
     ## 2. My Plan Before AI
 
     *Before you ask your agent anything, write how you would solve it: the steps, in order, in plain words, in five lines or more. Then answer these two questions:*
@@ -60,6 +68,22 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
+    Part C. Rebalancing the Portfolio
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    My goal is to ensure that the sum of all stock's shares multiplied by their prices is less than or equal to $5000. My goal is also to find out what share prices should be based on my target weights.
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
     ## 3. Inputs
 
     Every number the project starts from goes in the cell below, and nowhere else, so that changing one input changes every result after it.
@@ -67,6 +91,22 @@ def _(mo):
     Copy in the default inputs for your option from the Mini Project 1 page. If you chose D, your own option, type your data in here, or ask your agent to generate it with `faker`. The required part reads no file.
     """)
     return
+
+
+@app.cell
+def _():
+    holdings = [
+        ("AAPL", 100, 173.93),
+        ("MSFT", 50, 319.53),
+        ("GOOG", 80, 131.36),
+        ("AMZN", 200, 129.33),
+        ("NVDA", 20, 410.17),
+        ("TSLA", 150, 255.70),
+    ]
+    cash = 5000.00
+    target_weights = {"AAPL": 0.20, "MSFT": 0.20, "GOOG": 0.15,
+                      "AMZN": 0.15, "NVDA": 0.15, "TSLA": 0.15}
+    return (holdings,)
 
 
 @app.cell
@@ -86,7 +126,10 @@ def _(mo):
 
 
 @app.cell
-def _():
+def _(holdings):
+    for ticker, shares, price in holdings:
+        holding_value = shares * price
+        print(f"The total value of {ticker} is ${holding_value:.2f}")
     return
 
 
