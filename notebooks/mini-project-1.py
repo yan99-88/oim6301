@@ -112,7 +112,7 @@ def _():
     cash = 5000.00
     target_weights = {"AAPL": 0.20, "MSFT": 0.20, "GOOG": 0.15,
                       "AMZN": 0.15, "NVDA": 0.15, "TSLA": 0.15}
-    return holdings, target_weights
+    return cash, holdings, target_weights
 
 
 @app.cell
@@ -141,62 +141,12 @@ def _(mo):
 
 @app.cell
 def _(holdings):
-    for ticker, shares, price in holdings:
-        portfolio_value = 0
-        value = shares * price
-        if value > 0:
-            portfolio_value = value + portfolio_value
-    portfolio_value
-   
-    return (portfolio_value,)
-
-
-@app.cell
-def _(portfolio_value):
-    cash_included = portfolio_value + 5000
-    print(f"${cash_included}")
-    return (cash_included,)
-
-
-@app.cell
-def _(cash_included, target_weights):
-    for stock, target in target_weights.items:
-        target_amount = cash_included * target
-    print(target_amount)
-    return (target_amount,)
-
-
-@app.cell
-def _(holdings, target_amount):
-    for ticker, shares, price in holdings:
-        target_holdings = target_amount / price
-    print(target_holdings)
-    return (target_holdings,)
-
-
-@app.cell
-def _(holdings, target_holdings):
-    for ticker, shares, price in holdings:
-        shares_sold = target_holdings - shares
-    return
-
-
-app._unparsable_cell(
-    r"""
-    for ticker, shares, price in holdings:
-    total_cash_per_stock = target_amount + (shares_sold * price)
-    """,
-    name="_"
-)
-
-
-@app.cell
-def _():
-    return
-
-
-@app.cell
-def _():
+    for _ticker, _shares, _price in holdings:
+        _portfolio_value = 0
+        _value = _shares * _price
+        if _value > 0:
+            _portfolio_value = _value + _portfolio_value
+    _portfolio_value
     return
 
 
@@ -208,6 +158,122 @@ def _(mo):
     *A table of your results in the cell below, printed with `print` and f-strings, then one sentence here that answers the question in section 1, with the number in it.*
     """)
     return
+
+
+@app.cell
+def _(holdings):
+    portfolio_value = 0
+    for ticker, shares, price in holdings:
+        value = shares * price
+        portfolio_value = portfolio_value + value
+    portfolio_value
+    return (portfolio_value,)
+
+
+@app.cell
+def _(portfolio_value):
+    cash_included = portfolio_value + 5000
+    print(f"${cash_included}")
+    return (cash_included,)
+
+
+@app.cell
+def _(holdings, portfolio_value):
+    for _ticker, _shares, _price in holdings:
+        _value = _shares * _price
+        _original_weight = _value / portfolio_value
+        print(f"{_ticker}: {_original_weight:.2%}")
+    return
+
+
+@app.cell
+def _(holdings, portfolio_value, target_weights):
+    for _ticker, _shares, _price in holdings:
+        _value = _shares * _price
+        _original_weight = _value / portfolio_value
+        _target_weight = target_weights[_ticker]
+        _weight_change = (_target_weight - _original_weight) * 100
+        print(f"{_ticker}: {_weight_change:.2f} percentage points")
+    return
+
+
+@app.cell
+def _(cash_included, target_weights):
+    for stock, target in target_weights.items():
+        target_amount = cash_included * target
+        print(f"{stock}: ${target_amount:.2f}")
+    return
+
+
+@app.cell
+def _(cash_included, holdings, target_weights):
+    for _ticker, _shares, _price in holdings:
+        _weight = target_weights[_ticker]
+        _target_amount = cash_included * _weight
+        target_holdings = int(_target_amount / _price)
+        print(f"{_ticker}: {target_holdings} target shares")
+    return
+
+
+@app.cell
+def _(cash_included, holdings, target_weights):
+    for _ticker, _shares, _price in holdings:
+        _weight = target_weights[_ticker]
+        _target_amount = cash_included * _weight
+        _target_holdings = int(_target_amount / _price)
+        _difference = _shares - _target_holdings
+        if _difference > 0:
+            _label = "sell"
+        elif _difference < 0:
+            _label = "buy"
+        print(f"{_ticker}: {_label} {abs(_difference)}")
+    return
+
+
+@app.cell
+def _(cash_included, holdings, new_cash, target_weights):
+    _total_value_after = 0
+    for _ticker, _shares, _price in holdings:
+        _weight = target_weights[_ticker]
+        _target_amount = cash_included * _weight
+        _target_holdings = int(_target_amount / _price)
+        _value_after = _target_holdings * _price
+        _total_value_after = _total_value_after + _value_after
+
+    _total_with_cash = _total_value_after + new_cash
+
+    rebalance_table = []
+    for _ticker, _shares, _price in holdings:
+        _weight = target_weights[_ticker]
+        _target_amount = cash_included * _weight
+        _target_holdings = int(_target_amount / _price)
+        _shares_change = _target_holdings - _shares
+        _value_after = _target_holdings * _price
+        _weight_after = (_value_after / _total_with_cash) * 100
+        rebalance_table.append({
+            "Ticker": _ticker,
+            "Shares Now": _shares,
+            "Shares At Target": _target_holdings,
+            "Shares To Buy/Sell": _shares_change,
+            "Value After": round(_value_after, 2),
+            "Weight After (%)": round(_weight_after, 2),
+        })
+    rebalance_table
+    return
+
+
+@app.cell
+def _(cash_included, holdings, target_weights):
+    _cash_from_trades = 0
+    for _ticker, _shares, _price in holdings:
+        _weight = target_weights[_ticker]
+        _target_amount = cash_included * _weight
+        _target_holdings = int(_target_amount / _price)
+        _difference = _shares - _target_holdings
+        _cash_from_trades = _cash_from_trades + (_difference * _price)
+    new_cash = _cash_from_trades + 5000
+    print(f"${new_cash:.2f}")
+    return (new_cash,)
 
 
 @app.cell
@@ -249,6 +315,68 @@ def _(mo):
 
     *Take at least one step past the main task, in any direction, and use your agent as much as you like. It does not have to work. State what you tried, what you found, and where it is in this notebook.*
     """)
+    return
+
+
+@app.cell
+def _():
+    return
+
+
+@app.cell
+def _(cash, target_weights):
+    new_prices = [
+        ("AAPL", 100, 343.46),
+        ("MSFT", 50, 529.05),
+        ("GOOG", 80, 336.91),
+        ("AMZN", 200, 250.00),
+        ("NVDA", 20, 214.13),
+        ("TSLA", 150, 354.72),
+    ]
+
+    _new_portfolio_value = 0
+    for _ticker, _shares, _price in new_prices:
+        _value = _shares * _price
+        _new_portfolio_value = _new_portfolio_value + _value
+
+    _new_cash_included = _new_portfolio_value + cash
+
+    _new_total_value_after = 0
+    for _ticker, _shares, _price in new_prices:
+        _weight = target_weights[_ticker]
+        _target_amount = _new_cash_included * _weight
+        _target_holdings = int(_target_amount / _price)
+        _value_after = _target_holdings * _price
+        _new_total_value_after = _new_total_value_after + _value_after
+
+    _new_cash_from_trades = 0
+    for _ticker, _shares, _price in new_prices:
+        _weight = target_weights[_ticker]
+        _target_amount = _new_cash_included * _weight
+        _target_holdings = int(_target_amount / _price)
+        _difference = _shares - _target_holdings
+        _new_cash_from_trades = _new_cash_from_trades + (_difference * _price)
+    _new_cash_after = _new_cash_from_trades + cash
+
+    _new_total_with_cash = _new_total_value_after + _new_cash_after
+
+    new_price_table = []
+    for _ticker, _shares, _price in new_prices:
+        _weight = target_weights[_ticker]
+        _target_amount = _new_cash_included * _weight
+        _target_holdings = int(_target_amount / _price)
+        _shares_change = _target_holdings - _shares
+        _value_after = _target_holdings * _price
+        _weight_after = (_value_after / _new_total_with_cash) * 100
+        new_price_table.append({
+            "Ticker": _ticker,
+            "Shares Now": _shares,
+            "Shares At Target": _target_holdings,
+            "Shares To Buy/Sell": _shares_change,
+            "Value After": round(_value_after, 2),
+            "Weight After (%)": round(_weight_after, 2),
+        })
+    new_price_table
     return
 
 
