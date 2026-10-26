@@ -500,7 +500,7 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    Dictionary
+    1: Dictionary. The parts can change and it is one single line.
     """)
     return
 
@@ -508,7 +508,20 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    Set
+    2: Set. The line mentions that the customers are each listed once and sets only require each value once.
+    """)
+    return
+
+
+@app.cell
+def _():
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    3: List. Each product has multiple units sold, meaning that it is many of the same thing.
     """)
     return
 
@@ -516,15 +529,7 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    List
-    """)
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""
-    Tuple
+    4: Tuple. The information cannot be changed, therefore it is a tuple.
     """)
     return
 
@@ -558,6 +563,65 @@ def _():
         ("TSLA", 150, 255.70),
     ]
     holdings
+    return (holdings,)
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    1: I would rather work with the shape of this notebook since in the context of how many shares a portfolio owner holds and what the current stock prices are, those are things that don't change over time and can be treated as constants for the purposes of this analysis. Additionally, each with each stock having its own line, I don't have to constantly redefine symbol, shares, and price.
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    2: for ticker, shares, price in holdings
+        total_portfolio_price = 0;
+        total_portfolio_price = shares * price;
+        total_portfolio_price += total_portfolio_price;
+
+    print("Total portfolio value:", total_portfolio_price)
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    3: AI placed =0 above the for loop instead of below. It also added the += next to shares * price instead of after, like I did. The final version is the AI version and #2 is my version. I initially believed that the += had to be done after the calculation for one tuple so that it would then add to the total.
+    """)
+    return
+
+
+@app.cell
+def _(holdings):
+    total_portfolio_value = 0
+    for ticker, shares, price in holdings:
+        total_portfolio_value += shares * price
+    print("Total portfolio value:", total_portfolio_value)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    Going further: below this cell
+    """)
+    return
+
+
+@app.cell
+def _():
+    holding_costs = {"AAPL": 100*173.93, "MSFT": 50*319.53, "GOOG": 80*131.36, "AMZN": 200*129.33, "NVDA": 20*410.17, "TSLA": 150*255.70}
+    Expensive_holding = max(holding_costs, key=holding_costs.get)
+    print(f"The most expensive holding is {Expensive_holding} with a total cost of ${holding_costs[Expensive_holding]:.2f}")
+    return
+
+
+@app.cell
+def _():
     return
 
 
@@ -577,6 +641,14 @@ def _(mo):
     return
 
 
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    1: If you buy shares, you must add to the total and if you sell, you should subtract as much as you can from the earliest trade, then continue subtracting from subsequent trades until the full sold amount is accounted for. In doing this, you would have 30 shares of AAPL left on the march shares, then 60 shares total after July (March and July combined).After August, 0 shares in March (30-40) and 20 shares in July (30-10). You are now left with 20 shares. Each purchase or sale is multiplied depending on the type. if it's buy, the it is simply shares bought* price and that is subtracted from the total gain. If it's sold, then it is earliest shares * price at the time of shares.
+    """)
+    return
+
+
 @app.cell
 def _():
     year_trades = [
@@ -590,6 +662,36 @@ def _():
         ("2026-08-12", "AAPL", "sell", 40, 250.00),
     ]
     year_trades
+    return (year_trades,)
+
+
+@app.cell
+def _(year_trades):
+    lots = {}
+    gains = {}
+    total_gain = 0
+
+    for _date, _ticker, _action, _shares, _price in year_trades:
+        if _ticker not in lots:
+            lots[_ticker] = []
+            gains[_ticker] = 0
+        if _action == "buy":
+            lots[_ticker].append([_shares, _price])
+        else:
+            _shares_left = _shares
+            while _shares_left > 0:
+                _lot_shares, _lot_price = lots[_ticker][0]
+                _shares_used = min(_shares_left, _lot_shares)
+                _sale_gain = _shares_used * (_price - _lot_price)
+                gains[_ticker] += _sale_gain
+                total_gain += _sale_gain
+                _shares_left -= _shares_used
+                if _shares_used == _lot_shares:
+                    lots[_ticker].pop(0)
+                else:
+                    lots[_ticker][0][0] -= _shares_used
+
+    gains, total_gain, lots
     return
 
 
@@ -686,7 +788,7 @@ def _(mo):
 @app.cell
 def _(requests):
     bad_latitude_reply = requests.get(
-        "https://api.open-meteo.com/v1/forecast?latitude=422&longitude=-71.2649&current=temperature_2m",
+        "https://api.open-meteo.com/v1/forecast?latitude=42.2&longitude=-71.2649&current=temperature_2m",
         timeout=10,
     )
     bad_latitude_reply.status_code, bad_latitude_reply.json()
@@ -754,7 +856,8 @@ def _(mo):
 
 
 @app.cell
-def _():
+def _(babson_weather):
+    print(f"The wind speed is {babson_weather["current"]["wind_speed_10m"]}{babson_weather["current_units"]["wind_speed_10m"]}.")
     return
 
 
@@ -766,6 +869,26 @@ def _(mo):
     return
 
 
+@app.cell
+def _(requests):
+    correct_reply = requests.get(
+        "https://geocoding-api.open-meteo.com/v1/search?name=Wellesley&count=1",
+        timeout=10,
+    )
+    correct_reply.status_code, correct_reply.json()
+    return (correct_reply,)
+
+
+@app.cell
+def _(correct_reply):
+    town_name = "Wellesley"
+    town_place = correct_reply.json()["results"][0]
+    town_lat = town_place["latitude"]
+    town_lon = town_place["longitude"]
+    town_lat, town_lon
+    return town_lat, town_lon
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -773,6 +896,50 @@ def _(mo):
 
     **Going further.** Use F's coordinates to ask for Wellesley's current temperature. Build the address with an f-string, so that changing the town changes the forecast.
     """)
+    return
+
+
+@app.cell
+def _():
+    return
+
+
+@app.cell
+def _(requests):
+    new_reply = requests.get(
+        "https://geocoding-api.open-meteo.com/v1/search?name=Babson Park&count=1",
+        timeout=10,
+    )
+    new_reply.status_code, new_reply.json()
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    The state is Massachusetts. A code that always takes 0 would return the status code since there are dictionaries within the dictionary.
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    I forgot to rename the url as Babson Park. After re-naming, I see that it refers to Babson Park in Florida. Therefore, picking the first result can be misleading depending on what you are looking for.
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    Going further
+    """)
+    return
+
+
+@app.cell
+def _():
     return
 
 
@@ -817,6 +984,20 @@ def _(mo):
     - [ ] I can choose between a list, a tuple, a dictionary and a set, and state why
     - [ ] I can request data from an API and read both its status code and its reply
     """)
+    return
+
+
+@app.cell
+def _(requests, town_lat, town_lon):
+    town_forecast_url = (
+        f"https://api.open-meteo.com/v1/forecast"
+        f"?latitude={town_lat}&longitude={town_lon}"
+        f"&current=temperature_2m"
+        f"&temperature_unit=fahrenheit&timezone=America/New_York"
+    )
+    print(town_forecast_url)
+    town_forecast_reply = requests.get(town_forecast_url, timeout=10)
+    town_forecast_reply.status_code
     return
 
 
