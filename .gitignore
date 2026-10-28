@@ -182,3 +182,11 @@ cython_debug/
 
 
 __marimo__/
+.marimo/
+.config/
+
+# Editor / tool local state (machine-specific, never commit)
+.vscode/
+.vscode-shared/
+.copilot/
+.local/
